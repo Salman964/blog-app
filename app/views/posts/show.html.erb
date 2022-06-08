@@ -1,0 +1,9 @@
+<% if @post.image.attached? %>
+
+<p>
+  <%= image_tag @post.image.variant(resize: "500x500") %>
+</p>
+<% end %>
+
+<h1><%= current_user.email%></h1>
+<p><%= @post.caption %></p>
