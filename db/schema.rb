@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_06_06_153120) do
+ActiveRecord::Schema.define(version: 2022_06_08_113328) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -42,8 +42,11 @@ ActiveRecord::Schema.define(version: 2022_06_06_153120) do
     t.datetime "updated_at", null: false
     t.string "commantable_type"
     t.bigint "commantable_id"
+    t.text "content"
+    t.bigint "user_id"
     t.index ["commantable_type", "commantable_id"], name: "index_comments_on_commantable_type_and_commantable_id"
     t.index ["post_id"], name: "index_comments_on_post_id"
+    t.index ["user_id"], name: "index_comments_on_user_id"
   end
 
   create_table "likes", force: :cascade do |t|
@@ -100,6 +103,7 @@ ActiveRecord::Schema.define(version: 2022_06_06_153120) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "comments", "posts"
+  add_foreign_key "comments", "users"
   add_foreign_key "likes", "comments"
   add_foreign_key "posts", "users"
   add_foreign_key "reports", "comments"

@@ -1,25 +1,35 @@
 class CommentsController < ApplicationController
   def index
-    @comments = Post.find(params[:post_id]).comments.all
+    @comments = Comment.all
+    puts @comments
   end
 
   def show
-      @posts=Post.find(params[:post_id])
-      @comments=@posts.find(params[:id])
+      @post=Post.find(params[:post_id])
+      @comments=@post.find(params[:id])
   end
 
   def new
-      @comments =Comment.new(comment_params)
+    @post=Post.find(params[:post_id])
+    @comment=@post.comments.new
   end
 
-  def create
-      @comment=Post.find(params[:id]).comments.new(comment_params)
-      # @comments = Comment.new(post_params)
-      if @comment.save
-          redirect_to @comment
-      else
-          render :new, status: :unprocessable_entity
-      end
+  def create  
+     @post=current_user.posts.find(params[:post_id])
+    # @comment=@post.comments.new(comment_params)
+    # @comment.user = current_user
+    # @comment.post = @post
+    # @comment.save
+
+    @comment = Comment.new(comment_params)
+    @comment.user = current_user
+    @comment.post = @post
+    @comment.commantable_type="Post"
+    @comment.commantable_id=@post.id
+    
+    if @comment.save
+      redirect_to request.referrer
+    end
   end
 
 
@@ -33,6 +43,6 @@ class CommentsController < ApplicationController
   end
 
   def comment_params
-    # params.require(:comment).permit(:text, :username)
+    params.require(:comment).permit(:content, :post, :user)
  end
 end

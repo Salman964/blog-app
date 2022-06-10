@@ -62,5 +62,6 @@ gem "image_processing", ">= 1.2"
 
 gem 'bootstrap', '~> 4.0.0'
 gem 'sprockets-rails', :require => 'sprockets/railtie'
+gem 'htmlbeautifier'
 
 gem 'jquery-rails' 

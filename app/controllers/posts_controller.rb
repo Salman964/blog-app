@@ -1,6 +1,11 @@
 class PostsController < ApplicationController
   def index
-      @posts = current_user.posts.all      
+      #  @posts = current_user.posts.all      
+      @posts = Post.includes(:user).order(updated_at: :desc)
+      @comment =Comment.new
+
+      # @post=Post.find(params[:post_id])
+      # @comment=@post.comments.new
   end
   
   def show

@@ -2,7 +2,9 @@ class Post < ApplicationRecord
   default_scope {order(created_at: :desc)}
 
   # validates :user_id, :presence => true
-  # validates :caption,   :presence => true
+  validates :caption,  :presence => true
+  validates :user_id,  :presence => true
+   
 
   belongs_to :user
   has_many :comments, dependent: :destroy
