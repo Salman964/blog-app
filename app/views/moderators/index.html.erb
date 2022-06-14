@@ -1,0 +1,39 @@
+<div class="text-center">
+  <h1>Pending Posts</h1>
+</div>
+<% @posts.each do |post| %>
+  <%if post.pending?%>
+    <div class="container mt-5">
+      <div class="d-flex justify-content-center row">
+        <div class="col-md-8">
+          <div class="d-flex flex-column comment-section">
+            <div class="bg-white p-2">
+              <div class="d-flex flex-row user-info"><img class="rounded-circle" src="https://i.imgur.com/WUGxiYhb.jpg" width="40">
+                <div class="d-flex flex-column justify-content-start ml-2"><span class="d-block font-weight-bold name"><%=post.user.email %></span><span class="date text-black-50"><%= post.created_at.strftime("%Y-%m-%d  at  %H:%M:%S") %></span></div>
+              </div>
+              <div class="mt-2">
+                <p class="comment-text">
+                  <%=post.caption %>
+                </p>
+              </div>
+              <% if  post.image.attached?%>
+                <p>
+                  <%=link_to (image_tag post.image, style: "width: 710px; display:block") , post_path(post)  %>
+                </p>
+              <%end%>
+            </div>
+            <div class="bg-white">
+              <div class="d-flex flex-row fs-12">
+                <div class="like p-2 cursor text-success"><i class="fa fa-thumbs-o-up"></i>
+                  <%= link_to 'Approved', posts_approved_path(post), :method => :get %>
+                </div>
+                <div class="like p-2 cursor text-danger"><i class="fa fa-commenting-o"></i>
+                  <%=link_to 'Rejected' , posts_rejected_path(post), :method => :get  %>
+                </div>
+                <%# <div class="like p-2 cursor"><i class="fa fa-share"></i><span class="ml-1">Share</span></div> %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <%end%>
+    <% end %>

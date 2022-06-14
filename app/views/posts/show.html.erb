@@ -1,12 +1,10 @@
 <h1><%= current_user.email%></h1>
 <p><%= @post.caption %></p>
-
 <% if  @post.image.attached?%>
-<p>
-  <%=image_tag @post.image, style: "width: 710px; display:block" %>
-</p>
+  <p>
+    <%=image_tag @post.image, style: "width: 710px; display:block" %>
+  </p>
 <%end%>
-
 <%= form_for([@post, @post.comments.build], remote: true) do |f| %>
   <div class="form--input">
     <%= f.text_field :content, input_html: { class: "form-txt py-3" }, placeholder: "What do you want to comment?", label: false %>
@@ -15,4 +13,4 @@
     <div class="form--input_submit">
       <%= f.submit "Post Comment", class: "btn btn-flat", id: "post-submit", role: "status", remote: true %>
     </div>
-<%end%>
+  <%end%>
