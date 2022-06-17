@@ -1,8 +1,10 @@
   <%= form_with model: [post, post.comments.build] do |form| %>
   <div class="d-flex flex-row align-items-start"><img class="rounded-circle" src="https://i.imgur.com/WUGxiYhb.jpg" width="40">
-    <%= form.text_field :content %>
+    <%= form.text_area(:content, size: '70x3') %>
   </div>
-  <div class="mt-2 ">
-    <%= form.submit %>
+  <div class="mt-2 text-right">
+    <%= form.submit class: 'btn btn-primary' %>
+    <button class="btn btn-outline-primary btn-sm ml-1 shadow-none" type="button">Cancel</button>
   </div>
+</div>
 <% end %>

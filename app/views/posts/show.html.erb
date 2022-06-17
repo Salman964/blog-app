@@ -5,6 +5,8 @@
     <%=image_tag @post.image, style: "width: 710px; display:block" %>
   </p>
 <%end%>
+<%= link_to 'Like', post_likes_path(@post), method: :post %>
+<p><%= pluralize(@post.likes.count,'like')%></p>
 <%= form_for([@post, @post.comments.build], remote: true) do |f| %>
   <div class="form--input">
     <%= f.text_field :content, input_html: { class: "form-txt py-3" }, placeholder: "What do you want to comment?", label: false %>

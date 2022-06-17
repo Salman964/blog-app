@@ -7,7 +7,7 @@ class PostsController < ApplicationController
   end
 
   def show
-    @post = current_user.posts.find(params[:id])
+    @post = Post.find(params[:id])
   end
 
   def new
@@ -19,7 +19,7 @@ class PostsController < ApplicationController
     @post.user = current_user
 
     if @post.save
-      redirect_to 'product/suppliers'
+      redirect_to @post
       # redirect_to "http://localhost:3000/posts"
     else
       render :status => 404

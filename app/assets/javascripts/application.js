@@ -1,3 +1,6 @@
+/** @format */
+
+import "../stylesheets/application.scss";
 //= require jquery3
 //= require popper
 //= require bootstrap
