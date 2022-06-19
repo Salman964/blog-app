@@ -1,10 +1,13 @@
-<h1>Your Pending Posts</h1>
+<div class="text-center text-info">
+  <h1>Your Pending Posts</h1>
+</div>
 <%if current_user.users? %>
-  <div class="text-center text-primary">
-    <%=link_to 'Pending Posts' ,posts_pending_path %>
-    <%=link_to 'Rejected Posts' ,posts_myreject_path %>
-    <%=link_to 'Create a Post' ,new_post_path%>
-  </div>
+  <ul class="list-inline text-center ">
+    <li class="list-inline-item p-5 border border-primary"><%=link_to 'Create a Post' ,new_post_path%></li>
+    <li class="list-inline-item p-5 border border-primary"><%=link_to 'All Posts' ,posts_path %></li>
+    <li class="list-inline-item p-5 border border-danger"><%=link_to 'Rejected Posts' ,posts_myreject_path %></li>
+    <li class="list-inline-item p-5 border border-danger"><%=link_to 'View Your Suggestion Posts'  %></li>
+  </ul>
   <ul >
     <% @posts.each do |post| %>
       <%if post.pending? and post.user==current_user%>

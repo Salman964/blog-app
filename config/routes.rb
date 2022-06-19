@@ -18,8 +18,8 @@ Rails.application.routes.draw do
   get 'moderators/index'
   get 'moderators/approved'
 
-  devise_for :users
-  root 'users#index'
+  devise_for :users 
+  root 'posts#index'
   resources :users  
 
   resources :posts do

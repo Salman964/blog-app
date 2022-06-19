@@ -19,7 +19,7 @@ class PostsController < ApplicationController
     @post.user = current_user
 
     if @post.save
-      redirect_to @post
+      redirect_to posts_path
       # redirect_to "http://localhost:3000/posts"
     else
       render :status => 404
@@ -36,14 +36,8 @@ class PostsController < ApplicationController
     @comment = Comment.new
   end
 
-  def edit; end
-
-  def update; end
-
-  def destroy; end
 
   private
-
   def post_params
     params.require(:post).permit(:caption, :image)
   end

@@ -1,105 +1,109 @@
-<%if current_user.users? %>
-  <ul class="list-inline text-center ">
-    <li class="list-inline-item p-5 border border-primary"><%=link_to 'Create a Post' ,new_post_path%></li>
-    <li class="list-inline-item p-5 border border-primary"><%=link_to 'Pending Posts' ,posts_pending_path %></li>
-    <li class="list-inline-item p-5 border border-danger"><%=link_to 'Rejected Posts' ,posts_myreject_path %></li>
-    <li class="list-inline-item p-5 border border-danger"><%=link_to 'View Your Suggestion Posts'  %></li>
-  </ul>
-  <ul >
-    <% @posts.each do |post| %>
-      <%if post .approved?%>
-        <div class="container mt-5">
-          <div class="d-flex justify-content-center row">
-            <div class="col-md-8">
-              <div class="d-flex flex-column comment-section">
-                <div class="bg-white p-2">
-                  <div class="d-flex flex-row user-info"><img class="rounded-circle" src="https://i.imgur.com/WUGxiYhb.jpg" width="40">
-                    <div class="d-flex flex-column justify-content-start ml-2"><span class="d-block font-weight-bold name"><%=post.user.email %></span><span class="date text-black-50"><%= post.created_at.strftime("%Y-%m-%d  at  %H:%M:%S") %></span></div>
+<%if current_user%>
+  <%if current_user.users? %>
+    <ul class="list-inline text-center ">
+      <li class="list-inline-item p-5 border border-primary"><%=link_to 'Create a Post' ,new_post_path%></li>
+      <li class="list-inline-item p-5 border border-primary"><%=link_to 'Pending Posts' ,posts_pending_path %></li>
+      <li class="list-inline-item p-5 border border-danger"><%=link_to 'Rejected Posts' ,posts_myreject_path %></li>
+      <li class="list-inline-item p-5 border border-danger"><%=link_to 'View Your Suggestion Posts'  %></li>
+    </ul>
+    <ul >
+      <% @posts.each do |post| %>
+        <%if post.approved?%>
+          <div class="container mt-5">
+            <div class="d-flex justify-content-center row">
+              <div class="col-md-8">
+                <div class="d-flex flex-column comment-section">
+                  <div class="bg-white p-2">
+                    <div class="d-flex flex-row user-info"><img class="rounded-circle" src="https://i.imgur.com/WUGxiYhb.jpg" width="40">
+                      <div class="d-flex flex-column justify-content-start ml-2"><span class="d-block font-weight-bold name"><%=post.user.email %></span><span class="date text-black-50"><%= post.created_at.strftime("%Y-%m-%d  at  %H:%M:%S") %></span></div>
+                    </div>
+                    <div class="mt-2">
+                      <p class="comment-text">
+                        <%=post.caption %>
+                      </p>
+                    </div>
+                    <% if  post.image.attached?%>
+                      <p>
+                        <%=link_to (image_tag post.image, style: "width: 710px; display:block") , post_path(post)  %>
+                      </p>
+                    <%end%>
                   </div>
-                  <div class="mt-2">
-                    <p class="comment-text">
-                      <%=post.caption %>
-                    </p>
+                  <div class="bg-white">
+                    <div class="d-flex flex-row fs-12">
+                      <p> <%=pluralize(post.likes.count,'like')%></p>
+                      <% pre_like = post.likes.find { |like| like.user_id == current_user.id} %>
+                      <% if pre_like %>
+                        <%= button_to 'Unlike', post_like_path(post, pre_like), method: :delete %>
+                      <% else %>
+                        <%= button_to 'Like', post_likes_path(post), method: :post %>
+                      <% end %>
+                      <%# <div class="like p-2 cursor"><i class="fa fa-thumbs-o-up"></i><span class="ml-1">Like</span></div> %>
+                      <div class="like p-2 cursor"><i class="fa fa-commenting-o"></i><span class="ml-1">Comment</span></div>
+                      <%# <div class="like p-2 cursor"><i class="fa fa-share"></i><span class="ml-1">Share</span></div> %>
+                    </div>
                   </div>
-                  <% if  post.image.attached?%>
-                    <p>
-                      <%=link_to (image_tag post.image, style: "width: 710px; display:block") , post_path(post)  %>
-                    </p>
-                  <%end%>
-                </div>
-                <div class="bg-white">
-                  <div class="d-flex flex-row fs-12">
-                    <p> <%=pluralize(post.likes.count,'like')%></p>
-                    <% pre_like = post.likes.find { |like| like.user_id == current_user.id} %>
-                    <% if pre_like %>
-                      <%= button_to 'Unlike', post_like_path(post, pre_like), method: :delete %>
-                    <% else %>
-                      <%= button_to 'Like', post_likes_path(post), method: :post %>
-                    <% end %>
-                    <%# <div class="like p-2 cursor"><i class="fa fa-thumbs-o-up"></i><span class="ml-1">Like</span></div> %>
-                    <div class="like p-2 cursor"><i class="fa fa-commenting-o"></i><span class="ml-1">Comment</span></div>
-                    <%# <div class="like p-2 cursor"><i class="fa fa-share"></i><span class="ml-1">Share</span></div> %>
-                  </div>
-                </div>
-                <div class="bg-light p-2">
-                  <div class="form--input">
-                    <% post.comments.each do |comment|%>
-                      <%if comment.commantable_type=="Post"%>
-                        <div class="card mb-2 rounded" style="width: 30rem;">
-                          <div class="card-body ">
-                            <%=comment.content%>
-                            <span class="text-info">(comment by <%=comment.user.email%> )</span>
-                            <p> <%=pluralize(comment.likes.count,'like')%></p>
-                            <% pre_like_comment = comment.likes.find { |like| like.user_id == current_user.id } %>
-                            <% if pre_like_comment %>
-                              <%= button_to 'Unlike', delete_post_comments_like_path(post.id,comment.id,pre_like_comment) , method: :delete %>
-                            <% else %>
-                              <%= button_to 'Like', post_comments_like_path(post.id,comment.id) %>
-                            <% end %>
-                            <%if post.user_id== current_user.id%>
-                              <%= link_to 'Edit' , edit_post_comment_path(post,comment) %>
-                              <%= link_to 'Destroy', post_comment_path(post, comment) , method: :delete %>
-                            <%end%>
-                            <%= link_to 'Report' %>
-                            <%= link_to 'Suggestion' %>
-                            <br>
-                          </div>
-                        </div>
-                        <div>
-                        <%end%>
-                        <% if comment.replies.any? %>
-                          <% comment.replies.each do |reply| %>
-                            <%= render partial: 'comments/reply', locals: { reply: reply } %>
-                          <% end %>
-                        <% end %>
+                  <div class="bg-light p-2">
+                    <div class="form--input">
+                      <% post.comments.each do |comment|%>
                         <%if comment.commantable_type=="Post"%>
-                          <%= form_with  url: comment_replies_path(post.id,comment.id), method: :post do |form| %>
-                            <div >
-                              <div >
-                                <img class="rounded-circle" src="https://i.imgur.com/WUGxiYhb.jpg" width="40">
-                                <%= form.text_area(:content, size: '10x1') %>
-                              </div>
-                              <div >
-                                <%= form.submit "create reply", class: 'btn btn-primary' %>
-                                <button class="btn btn-outline-primary btn-sm ml-1 shadow-none" type="button">Cancel</button>
-                              </div>
+                          <div class="card mb-2 rounded" style="width: 30rem;">
+                            <div class="card-body ">
+                              <%=comment.content%>
+                              <span class="text-info">(comment by <%=comment.user.email%> )</span>
+                              <p> <%=pluralize(comment.likes.count,'like')%></p>
+                              <% pre_like_comment = comment.likes.find { |like| like.user_id == current_user.id } %>
+                              <% if pre_like_comment %>
+                                <%= button_to 'Unlike', delete_post_comments_like_path(post.id,comment.id,pre_like_comment) , method: :delete %>
+                              <% else %>
+                                <%= button_to 'Like', post_comments_like_path(post.id,comment.id) %>
+                              <% end %>
+                              <%if post.user_id== current_user.id%>
+                                <%= link_to 'Edit' , edit_post_comment_path(post,comment) %>
+                                <%= link_to 'Destroy', post_comment_path(post, comment) , method: :delete %>
+                              <%end%>
+                              <%= link_to 'Report' %>
+                              <%= link_to 'Suggestion' %>
+                              <br>
                             </div>
                           </div>
-                        <%end%>
+                          <div>
+                          <%end%>
+                          <% if comment.replies.any? %>
+                            <% comment.replies.each do |reply| %>
+                              <%= render partial: 'comments/reply', locals: { reply: reply } %>
+                            <% end %>
+                          <% end %>
+                          <%if comment.commantable_type=="Post"%>
+                            <%= form_with  url: comment_replies_path(post.id,comment.id), method: :post do |form| %>
+                              <div >
+                                <div >
+                                  <img class="rounded-circle" src="https://i.imgur.com/WUGxiYhb.jpg" width="40">
+                                  <%= form.text_area(:content, size: '10x1') %>
+                                </div>
+                                <div >
+                                  <%= form.submit "create reply", class: 'btn btn-primary' %>
+                                  <button class="btn btn-outline-primary btn-sm ml-1 shadow-none" type="button">Cancel</button>
+                                </div>
+                              </div>
+                            </div>
+                          <%end%>
+                        <% end %>
                       <% end %>
-                    <% end %>
-                    <%=render partial: "comments/form", locals: {post: post} %>
+                      <%=render partial: "comments/form", locals: {post: post} %>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          <%end%>
-        <% end %>
-      </ul>
-    <%end%>
-    <%if current_user.moderators? %>
-      <% controller.redirect_to moderators_index_path %>
-    <%end%>
-    <%if current_user.admin? %>
-      <% controller.redirect_to moderators_index_path %>
+            <%end%>
+          <% end %>
+        </ul>
+      <%end%>
+      <%if current_user.moderators? %>
+        <% controller.redirect_to moderators_index_path %>
+      <%end%>
+      <%if current_user.admin? %>
+        <% controller.redirect_to moderators_index_path %>
+      <%end%>
+    <%else%>
+      <%controller.redirect_to new_user_session_path%>
     <%end%>
