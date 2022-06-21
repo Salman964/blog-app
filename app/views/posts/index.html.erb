@@ -1,11 +1,5 @@
 <%if current_user%>
   <%if current_user.users? %>
-    <ul class="list-inline text-center ">
-      <li class="list-inline-item p-5 border border-primary"><%=link_to 'Create a Post' ,new_post_path%></li>
-      <li class="list-inline-item p-5 border border-primary"><%=link_to 'Pending Posts' ,pending_posts_path %></li>
-      <li class="list-inline-item p-5 border border-danger"><%=link_to 'Rejected Posts' ,myrejected_posts_path %></li>
-      <li class="list-inline-item p-5 border border-danger"><%=link_to 'View Your Suggestion Posts'  %></li>
-    </ul>
     <ul >
       <% @posts.each do |post| %>
         <%if post.approved?%>
@@ -103,7 +97,7 @@
         <% controller.redirect_to moderators_path %>
       <%end%>
       <%if current_user.admin? %>
-        <% controller.redirect_to moderators_path %>
+        <% controller.redirect_to rails_admin_path %>
       <%end%>
     <%else%>
       <%controller.redirect_to new_user_session_path%>

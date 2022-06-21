@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::Base
+
   # protect_from_forgery with: :null_session
   # include Pundit::Authorization
   include ActiveModel::Serialization
-  rescue_from ActiveRecord::RecordNotFound, with: :not_found 
+  #rescue_from ActiveRecord::RecordNotFound, with: :not_found 
   # rescue_from Exception, with: :not_found
   # rescue_from ActionController::RoutingError, with: :not_found
   # # rescue_from ActionController::UnknownController, with: :not_found
@@ -28,5 +29,9 @@ class ApplicationController < ActionController::Base
       format.any { head :not_found }
     end
   end
+
+  def after_sign_out_path_for(resource_or_scope)        
+    root_path
+   end 
 
 end

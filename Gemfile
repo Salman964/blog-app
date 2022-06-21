@@ -67,4 +67,4 @@ gem 'sprockets-rails', require: 'sprockets/railtie'
 
 gem 'jquery-rails'
 
-
+gem 'rails_admin', '~> 2.2.1'
