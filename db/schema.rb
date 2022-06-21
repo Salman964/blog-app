@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_06_19_154507) do
+ActiveRecord::Schema.define(version: 2022_06_21_075142) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -105,9 +105,11 @@ ActiveRecord::Schema.define(version: 2022_06_19_154507) do
     t.bigint "reportable_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id"
     t.index ["comment_id"], name: "index_reports_on_comment_id"
     t.index ["post_id"], name: "index_reports_on_post_id"
     t.index ["reportable_type", "reportable_id"], name: "index_reports_on_reportable_type_and_reportable_id"
+    t.index ["user_id"], name: "index_reports_on_user_id"
   end
 
   create_table "suggestions", force: :cascade do |t|
@@ -131,6 +133,11 @@ ActiveRecord::Schema.define(version: 2022_06_19_154507) do
     t.integer "failed_attempts", default: 0, null: false
     t.datetime "locked_at"
     t.string "unlock_token"
+    t.string "confirmation_token"
+    t.datetime "confirmed_at"
+    t.datetime "confirmation_sent_at"
+    t.string "unconfirmed_email"
+    t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
@@ -145,6 +152,7 @@ ActiveRecord::Schema.define(version: 2022_06_19_154507) do
   add_foreign_key "posts", "users"
   add_foreign_key "reports", "comments"
   add_foreign_key "reports", "posts"
+  add_foreign_key "reports", "users"
   add_foreign_key "suggestions", "posts"
   add_foreign_key "suggestions", "users"
 end

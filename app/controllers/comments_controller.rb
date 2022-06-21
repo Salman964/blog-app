@@ -1,22 +1,20 @@
 # frozen_string_literal: true
 class CommentsController < ApplicationController
+  before_action :find_post
+  
   def index
     @comments = Comment.all
-    puts @comments
   end
-
   def show
-    @post = Post.find(params[:post_id])
-    @comments = @post.find(params[:id])
+    @comments = @post.comments.find(params[:id])
+    @user = @comments.user
   end
 
   def new
-    @post = Post.find(params[:post_id])
     @comment = @post.comments.new(commentable_id: params[:comment_id])
   end
   
   def create
-    @post = Post.find(params[:post_id])
     @comment = Comment.new(comment_params)
     @comment.user = current_user
     @comment.post = @post
@@ -25,11 +23,11 @@ class CommentsController < ApplicationController
     redirect_to request.referrer if @comment.save  
   end
 
-  def destroy
-    @post = Post.find(params[:post_id])
+  def destroy   
     @comment = @post.comments.find(params[:id])
-    @comment.destroy
-    redirect_to request.referrer
+    if @comment.destroy  
+       redirect_to posts_path
+    end
   end
 
   def comment_params
@@ -37,8 +35,7 @@ class CommentsController < ApplicationController
   end
 
   def reply
-    @post = Post.find(params[:post_id])
-    @parentcomment = @post.comments.find(params[:comment_id])
+    @parentcomment = @post.comments.find(params[:id])
     @reply = @parentcomment.replies.build
     @reply.user_id = current_user.id
     @reply.post_id = @post.id
@@ -47,4 +44,31 @@ class CommentsController < ApplicationController
     @reply.commantable_id = @parentcomment.id
     redirect_to request.referrer if @reply.save
   end
+
+
+  def like
+    @comment = @post.comments.find(params[:id])
+    if @comment.likes.create(post_id: @post.id, user_id: current_user.id,comment_id: @comment.id ,likeable_type: 'Comment', likeable_id: @comment.id )
+      redirect_to request.referrer
+    end
+  end
+  
+  def like_destroy
+    @comment = @post.comments.find(params[:id])
+    @comment_like = @comment.likes.find_by(user_id: current_user)
+  
+    if @comment_like.delete
+      redirect_to request.referrer
+    end
+  end
+  
+  def report
+  end
+  
+  private
+    def find_post
+      @post = Post.find(params[:post_id])
+    end
 end
+
+

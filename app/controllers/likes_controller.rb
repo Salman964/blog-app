@@ -52,5 +52,4 @@ end
     Like.where(user_id: current_user.id, post_id:
     params[:post_id], likeable_type: "Post").exists?
   end
-
 end

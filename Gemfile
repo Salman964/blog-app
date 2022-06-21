@@ -66,3 +66,5 @@ gem 'htmlbeautifier'
 gem 'sprockets-rails', require: 'sprockets/railtie'
 
 gem 'jquery-rails'
+
+

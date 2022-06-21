@@ -2,8 +2,8 @@
   <%if current_user.users? %>
     <ul class="list-inline text-center ">
       <li class="list-inline-item p-5 border border-primary"><%=link_to 'Create a Post' ,new_post_path%></li>
-      <li class="list-inline-item p-5 border border-primary"><%=link_to 'Pending Posts' ,posts_pending_path %></li>
-      <li class="list-inline-item p-5 border border-danger"><%=link_to 'Rejected Posts' ,posts_myreject_path %></li>
+      <li class="list-inline-item p-5 border border-primary"><%=link_to 'Pending Posts' ,pending_posts_path %></li>
+      <li class="list-inline-item p-5 border border-danger"><%=link_to 'Rejected Posts' ,myrejected_posts_path %></li>
       <li class="list-inline-item p-5 border border-danger"><%=link_to 'View Your Suggestion Posts'  %></li>
     </ul>
     <ul >
@@ -33,10 +33,11 @@
                       <p> <%=pluralize(post.likes.count,'like')%></p>
                       <% pre_like = post.likes.find { |like| like.user_id == current_user.id} %>
                       <% if pre_like %>
-                        <%= button_to 'Unlike', post_like_path(post, pre_like), method: :delete %>
+                        <%= button_to 'Unlike', like_destroy_post_path(post, pre_like), method: :delete %>
                       <% else %>
-                        <%= button_to 'Like', post_likes_path(post), method: :post %>
+                        <%= button_to 'Like', like_post_path(post), method: :post %>
                       <% end %>
+                      <%= link_to 'Report',report_post_path(post) %><br>
                       <%# <div class="like p-2 cursor"><i class="fa fa-thumbs-o-up"></i><span class="ml-1">Like</span></div> %>
                       <div class="like p-2 cursor"><i class="fa fa-commenting-o"></i><span class="ml-1">Comment</span></div>
                       <%# <div class="like p-2 cursor"><i class="fa fa-share"></i><span class="ml-1">Share</span></div> %>
@@ -53,15 +54,15 @@
                               <p> <%=pluralize(comment.likes.count,'like')%></p>
                               <% pre_like_comment = comment.likes.find { |like| like.user_id == current_user.id } %>
                               <% if pre_like_comment %>
-                                <%= button_to 'Unlike', delete_post_comments_like_path(post.id,comment.id,pre_like_comment) , method: :delete %>
+                                <%= button_to 'Unlike', like_destroy_post_comment_path(post.id,comment.id,pre_like_comment) , method: :delete %>
                               <% else %>
-                                <%= button_to 'Like', post_comments_like_path(post.id,comment.id) %>
+                                <%= button_to 'Like', like_post_comment_path(post.id,comment.id) %>
                               <% end %>
                               <%if post.user_id== current_user.id%>
-                                <%= link_to 'Edit' , edit_post_comment_path(post,comment) %>
-                                <%= link_to 'Destroy', post_comment_path(post, comment) , method: :delete %>
+                                <%= button_to 'Edit' , edit_post_comment_path(post,comment) %>
+                                <%= button_to 'Destroy', post_comment_path(post,comment) , method: :delete %>
                               <%end%>
-                              <%= link_to 'Report' %>
+                              <%= link_to 'Report' %><br>
                               <%= link_to 'Suggestion' %>
                               <br>
                             </div>
@@ -74,7 +75,7 @@
                             <% end %>
                           <% end %>
                           <%if comment.commantable_type=="Post"%>
-                            <%= form_with  url: comment_replies_path(post.id,comment.id), method: :post do |form| %>
+                            <%= form_with  url: reply_post_comment_path(post.id,comment.id), method: :post do |form| %>
                               <div >
                                 <div >
                                   <img class="rounded-circle" src="https://i.imgur.com/WUGxiYhb.jpg" width="40">
@@ -99,10 +100,10 @@
         </ul>
       <%end%>
       <%if current_user.moderators? %>
-        <% controller.redirect_to moderators_index_path %>
+        <% controller.redirect_to moderators_path %>
       <%end%>
       <%if current_user.admin? %>
-        <% controller.redirect_to moderators_index_path %>
+        <% controller.redirect_to moderators_path %>
       <%end%>
     <%else%>
       <%controller.redirect_to new_user_session_path%>

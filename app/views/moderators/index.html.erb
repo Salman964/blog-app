@@ -25,10 +25,10 @@
             <div class="bg-white">
               <div class="d-flex flex-row fs-12">
                 <div class="like p-2 cursor text-success"><i class="fa fa-thumbs-o-up"></i>
-                  <%= link_to 'Approved', posts_approved_path(post), :method => :get %>
+                  <%= link_to 'Approved',   approved_post_path(post), :method => :get %>
                 </div>
                 <div class="like p-2 cursor text-danger"><i class="fa fa-commenting-o"></i>
-                  <%=link_to 'Rejected' , posts_rejected_path(post), :method => :get  %>
+                  <%=link_to 'Rejected' , rejected_post_path(post), :method => :get  %>
                 </div>
                 <%# <div class="like p-2 cursor"><i class="fa fa-share"></i><span class="ml-1">Share</span></div> %>
               </div>
