@@ -34,16 +34,18 @@ class PostsController < ApplicationController
 
   def report
     @post = Post.find(params[:id])
-    @report=Report.new(report_params)
-    @report.post_id=@post_id
-    @report.reportable_type="Post" 
-    @report.reportable_id=@post.id 
-    @report.user_id:current_user.id
-    
-    # @report=Report.new(post_id:@post.id, reportable_type:"Post", reportable_id:@post.id, user_id:current_user.id)
-    if @report.save
-      byebug
+    @report = Report.new
+    @report=@post.reports.new(post_id:@post.id, reportable_type:"Post", reportable_id:@post.id, user_id:current_user.id)
+     if @report.save
       redirect_to request.referrer
+    end
+  end
+
+  def report_destroy
+    @post = Post.find(params[:id])
+    @report = Report.find_by(post_id: @post.id)
+    if @report.destroy
+    redirect_to request.referrer
     end
   end
 
@@ -82,13 +84,18 @@ class PostsController < ApplicationController
     end
   end
 
+
+  def reported
+    @reported_posts = Post.where(id: Report.where(reportable_type: 'Post').map(&:reportable_id))
+  end
+
   private
   def post_params
     params.require(:post).permit(:caption, :image)
   end
 
   def report_params
-    params.require(:report).permit.permit!
+    params.require(:report).permit.per
   end
 
   def assaign_post_and_create_comment

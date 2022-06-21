@@ -8,14 +8,23 @@
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
   </head>
   <body>
-    <% if current_user%>
-      <ul class="list-inline text-center ">
-        <li class="list-inline-item p-5 border border-primary"><%=link_to 'Create a Post' ,new_post_path%></li>
-        <li class="list-inline-item p-5 border border-primary"><%=link_to 'Pending Posts' ,pending_posts_path %></li>
-        <li class="list-inline-item p-5 border border-danger"><%=link_to 'Rejected Posts' ,myrejected_posts_path %></li>
-        <li class="list-inline-item p-5 border border-danger"><%=link_to 'View Your Suggestion Posts'  %></li>
-        <li class="list-inline-item p-2 border border-danger"> <%= button_to 'Logout' , destroy_user_session_path, method: :delete%></li>
-      </ul>
+    <%if current_user%>
+      <% if current_user.users?%>
+        <ul class="list-inline text-center ">
+          <li class="list-inline-item p-5 border border-primary"><%=link_to 'Create a Post' ,new_post_path%></li>
+          <li class="list-inline-item p-5 border border-primary"><%=link_to 'Pending Posts' ,pending_posts_path %></li>
+          <li class="list-inline-item p-5 border border-danger"><%=link_to 'Rejected Posts' ,myrejected_posts_path %></li>
+          <li class="list-inline-item p-5 border border-danger"><%=link_to 'View Your Suggestion Posts'  %></li>
+          <li class="list-inline-item p-2 border border-danger"> <%= button_to 'Logout' , destroy_user_session_path, method: :delete%></li>
+        </ul>
+      <%end%>
+      <% if current_user.moderators?%>
+        <ul class="list-inline text-center ">
+          <li class="list-inline-item p-5 border border-primary"><%=link_to 'Pending Posts' ,moderators_path%></li>
+          <li class="list-inline-item p-5 border border-primary"><%=link_to 'Reported Posts',reported_posts_path %></li>
+          <li class="list-inline-item p-2 border border-danger"> <%= button_to 'Logout' , destroy_user_session_path, method: :delete%></li>
+        </ul>
+      <%end%>
     <%end%>
     <%= yield %>
     <p class="notice"><%= notice %></p>

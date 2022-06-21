@@ -31,10 +31,13 @@
                       <% else %>
                         <%= button_to 'Like', like_post_path(post), method: :post %>
                       <% end %>
-                      <%= link_to 'Report',report_post_path(post) %><br>
-                      <%# <div class="like p-2 cursor"><i class="fa fa-thumbs-o-up"></i><span class="ml-1">Like</span></div> %>
+                      <% pre_report = post.reports.find { |report| report.user_id == current_user.id} %>
+                      <% if pre_report %>
+                        <%= button_to 'withdraw report', report_destroy_post_path(post, pre_report), method: :delete %>
+                      <% else %>
+                        <%= button_to 'report', report_post_path(post), method: :post %>
+                      <% end %>
                       <div class="like p-2 cursor"><i class="fa fa-commenting-o"></i><span class="ml-1">Comment</span></div>
-                      <%# <div class="like p-2 cursor"><i class="fa fa-share"></i><span class="ml-1">Share</span></div> %>
                     </div>
                   </div>
                   <div class="bg-light p-2">
@@ -56,7 +59,12 @@
                                 <%= button_to 'Edit' , edit_post_comment_path(post,comment) %>
                                 <%= button_to 'Destroy', post_comment_path(post,comment) , method: :delete %>
                               <%end%>
-                              <%= link_to 'Report' %><br>
+                              <% pre_comment_report = comment.reports.find { |report| report.user_id == current_user.id} %>
+                              <% if pre_comment_report %>
+                                <%= button_to 'withdraw report', report_destroy_post_comment_path(post.id,comment.id, pre_comment_report), method: :delete %>
+                              <% else %>
+                                <%= button_to 'report', report_post_comment_path(post.id,comment.id), method: :post %>
+                              <% end %>
                               <%= link_to 'Suggestion' %>
                               <br>
                             </div>

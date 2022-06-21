@@ -101,7 +101,7 @@ ActiveRecord::Schema.define(version: 2022_06_21_075142) do
   create_table "reports", force: :cascade do |t|
     t.bigint "post_id"
     t.bigint "comment_id"
-    t.string "reportable_type"
+    t.string "reortable_typep"
     t.bigint "reportable_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

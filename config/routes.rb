@@ -14,7 +14,8 @@ Rails.application.routes.draw do
     member do
       post :like
       delete :like_destroy
-      get :report
+      post :report
+      delete :report_destroy
       get :approved
       get :rejected
 
@@ -22,15 +23,19 @@ Rails.application.routes.draw do
 
     collection do
       get :pending
+      get :reported
       get :myrejected
     end
 
     resources :likes, only: %i[create destroy]
     resources :comments do
-      post :like, on: :member
-      delete :like_destroy, on: :member
-      get :report, on: :member
-      post :reply, on: :member
+      member do
+      post :like
+      delete :like_destroy
+      post :report
+      delete :report_destroy
+      post :reply
+      end
     end
   end
 

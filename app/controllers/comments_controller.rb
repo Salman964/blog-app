@@ -63,6 +63,19 @@ class CommentsController < ApplicationController
   end
   
   def report
+    @comment = @post.comments.find(params[:id])
+    if @comment.reports.create(post_id: @post.id, user_id: current_user.id,comment_id: @comment.id ,reportable_type: 'Comment', reportable_id: @comment.id )
+      redirect_to request.referrer
+    end
+  end
+
+  def report_destroy
+    @comment = @post.comments.find(params[:id])
+    @comment_report = @comment.reports.find_by(user_id: current_user)
+  
+    if @comment_report.delete
+      redirect_to request.referrer
+    end
   end
   
   private
