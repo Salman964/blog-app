@@ -1,3 +1,5 @@
+<!-- @format -->
+
 # README
 
 This README would normally document whatever steps are necessary to get the
@@ -5,20 +7,42 @@ application up and running.
 
 Things you may want to cover:
 
-* Ruby version
+# Ruby version
 
-* System dependencies
+2.7.5
 
-* Configuration
+# Rails version
 
-* Database creation
+    5.2.8
 
-* Database initialization
+# System dependencies
 
-* How to run the test suite
+- Active Storage
+- Devise
+- Bootstrap
+- rubocop
+- pundit
 
-* Services (job queues, cache servers, search engines, etc.)
+# Database initialization
 
-* Deployment instructions
+- rails db:seed
 
-* ...
+# Configuration
+
+- Rubocop configuration settings
+- SMTP settings
+
+# Database creation
+
+- rails db:create
+- rails db:migrate
+
+# Start the Rails server
+
+You can start the rails server using the command given below.
+
+rails s
+
+And now you can visit the site with the URL http://localhost:3000
+
+# Blogapp

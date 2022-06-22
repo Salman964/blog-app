@@ -1,19 +1,23 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::Base
-
+  before_action proc { |controller|
+                  if controller.request.xhr?
+                    (controller.action_has_layout = false)
+                  end
+                }
   # protect_from_forgery with: :null_session
-  # include Pundit::Authorization
+  include Pundit::Authorization
   include ActiveModel::Serialization
-  #rescue_from ActiveRecord::RecordNotFound, with: :not_found 
+  # rescue_from ActiveRecord::RecordNotFound, with: :not_found
   # rescue_from Exception, with: :not_found
   # rescue_from ActionController::RoutingError, with: :not_found
   # # rescue_from ActionController::UnknownController, with: :not_found
-  
+
   def raise_not_found
-    raise ActionController::RoutingError.new("No route matches #{params[:unmatched_route]}")
+    raise ActionController::RoutingError, "No route matches #{params[:unmatched_route]}"
   end
-  
+
   def not_found
     respond_to do |format|
       format.html { render file: "#{Rails.root}/public/404", layout: false, status: :not_found }
@@ -21,7 +25,7 @@ class ApplicationController < ActionController::Base
       format.any { head :not_found }
     end
   end
-  
+
   def error
     respond_to do |format|
       format.html { render file: "#{Rails.root}/public/500", layout: false, status: :error }
@@ -30,8 +34,7 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def after_sign_out_path_for(resource_or_scope)        
+  def after_sign_out_path_for(_resource_or_scope)
     root_path
-   end 
-
+  end
 end

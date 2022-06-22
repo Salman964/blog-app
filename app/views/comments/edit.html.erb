@@ -1,0 +1,6 @@
+<%= form_for :comment do |c| %>
+  <p>
+    <%= c.label :content %><br/>
+    <%= c.text_field :content %><br/>
+    <%= c.submit "Save changes" %>
+  <% end %>

@@ -1,16 +1,12 @@
 # frozen_string_literal: true
 
-class PostsController < ApplicationController  
+class PostsController < ApplicationController
   before_action :assaign_post_and_create_comment
-  # before_action :find_post_comment
-  # before_action :find_like, only: [:destroy]
+  before_action :find_post, only: %i[show report report_destroy like like_destroy]
   
-  def index
-  end
+  def index; end
 
-  def show
-    @post = Post.find(params[:id])
-  end
+  def show;  end
 
   def new
     @post = current_user.posts.new
@@ -22,9 +18,8 @@ class PostsController < ApplicationController
 
     if @post.save
       redirect_to posts_path
-      # redirect_to "http://localhost:3000/posts"
     else
-      render :status => 404
+      render status: :not_found
     end
   end
 
@@ -33,63 +28,58 @@ class PostsController < ApplicationController
   def myrejected; end
 
   def report
-    @post = Post.find(params[:id])
     @report = Report.new
-    @report=@post.reports.new(post_id:@post.id, reportable_type:"Post", reportable_id:@post.id, user_id:current_user.id)
-     if @report.save
-      redirect_to request.referrer
-    end
+    @report = @post.reports.new(post_id: @post.id, reportable_type: "Post", reportable_id: @post.id,
+                                user_id: current_user.id)
+    redirect_to request.referer if @report.save
   end
 
   def report_destroy
-    @post = Post.find(params[:id])
     @report = Report.find_by(post_id: @post.id)
-    if @report.destroy
-    redirect_to request.referrer
-    end
+    redirect_to request.referer if @report.destroy
   end
 
   def like
     if already_liked?
       flash[:notice] = "You can't like more than once"
     else
-      @post = Post.find(params[:id])
-      @post.likes.create(user_id: current_user.id,post_id: @post.id ,likeable_type: 'Post', likeable_id: @post.id )
+      @like = @post.likes.new(user_id: current_user.id, post_id: @post.id, likeable_type: "Post",
+                              likeable_id: @post.id)
     end
-    redirect_to request.referrer
+
+    respond_to do |format|
+      if @like.save
+        format.html { redirect_to request.referer }
+        # format.json { head :no_content }
+        format.js
+      end
+    end
+    # redirect_to request.referer if @like.save
   end
 
   def like_destroy
-    @post = Post.find(params[:id])
     @like = Like.find_by(post_id: @post.id)
-    if @like.destroy
-    redirect_to request.referrer
-    end
+    redirect_to request.referer if @like.destroy
   end
-
 
   def approved
     @approve_post = Post.find params[:id]
     @approve_post.update_attribute(:post_status, 1)
-    if @approve_post.save
-      render plain: 'Post has been approved'
-    end
-  end 
+    render plain: "Post has been approved" if @approve_post.save
+  end
 
   def rejected
     @rejected_post = Post.find params[:id]
     @rejected_post.update_attribute(:post_status, 2)
-    if @rejected_post.save
-      render plain: 'Post has been rejected'
-    end
+    render plain: "Post has been rejected" if @rejected_post.save
   end
 
-
   def reported
-    @reported_posts = Post.where(id: Report.where(reportable_type: 'Post').map(&:reportable_id))
+    @reported_posts = Post.where(id: Report.where(reportable_type: "Post").map(&:reportable_id))
   end
 
   private
+
   def post_params
     params.require(:post).permit(:caption, :image)
   end
@@ -103,17 +93,13 @@ class PostsController < ApplicationController
     @comment = Comment.new
   end
 
-
-  def find_post_comment
-    @post = Post.find(params[:post_id])
-    if params[:comment_id]
-       @comment = @post.comments.find(params[:comment_id])
-    end
+  def find_post
+    @post = Post.find(params[:id])
+    authorize @post
   end
 
   def already_liked?
     Like.where(user_id: current_user.id, post_id:
     params[:post_id], likeable_type: "Post").exists?
   end
-
 end

@@ -1,6 +1,6 @@
+# frozen_string_literal: true
+
 RailsAdmin.config do |config|
-
-
   ### Popular gems integration
 
   ## == Devise ==
@@ -8,7 +8,6 @@ RailsAdmin.config do |config|
     warden.authenticate! scope: :user
   end
   config.current_user_method(&:current_user)
-
 
   ## == CancanCan ==
   # config.authorize_with :cancancan
@@ -40,5 +39,4 @@ RailsAdmin.config do |config|
     # history_index
     # history_show
   end
-
 end

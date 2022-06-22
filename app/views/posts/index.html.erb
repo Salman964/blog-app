@@ -27,9 +27,9 @@
                       <p> <%=pluralize(post.likes.count,'like')%></p>
                       <% pre_like = post.likes.find { |like| like.user_id == current_user.id} %>
                       <% if pre_like %>
-                        <%= button_to 'Unlike', like_destroy_post_path(post, pre_like), method: :delete %>
+                        <%= button_to 'Unlike', like_destroy_post_path(post, pre_like), method: :delete,  remote: true %>
                       <% else %>
-                        <%= button_to 'Like', like_post_path(post), method: :post %>
+                        <%= button_to 'Like', like_post_path(post), method: :post, remote: true %>
                       <% end %>
                       <% pre_report = post.reports.find { |report| report.user_id == current_user.id} %>
                       <% if pre_report %>
@@ -38,6 +38,11 @@
                         <%= button_to 'report', report_post_path(post), method: :post %>
                       <% end %>
                       <div class="like p-2 cursor"><i class="fa fa-commenting-o"></i><span class="ml-1">Comment</span></div>
+                      <span> Suggestion</span>
+                      <%= form_with  remote: true do |form| %>
+                        <%= form.text_area(:content, size: '10x1') %>
+                        <%= form.submit %>
+                      <% end %>
                     </div>
                   </div>
                   <div class="bg-light p-2">
@@ -56,7 +61,7 @@
                                 <%= button_to 'Like', like_post_comment_path(post.id,comment.id) %>
                               <% end %>
                               <%if post.user_id== current_user.id%>
-                                <%= button_to 'Edit' , edit_post_comment_path(post,comment) %>
+                                <%# <%= button_to 'Edit' , edit_post_comment_path(post,comment) %>
                                 <%= button_to 'Destroy', post_comment_path(post,comment) , method: :delete %>
                               <%end%>
                               <% pre_comment_report = comment.reports.find { |report| report.user_id == current_user.id} %>
@@ -65,7 +70,6 @@
                               <% else %>
                                 <%= button_to 'report', report_post_comment_path(post.id,comment.id), method: :post %>
                               <% end %>
-                              <%= link_to 'Suggestion' %>
                               <br>
                             </div>
                           </div>

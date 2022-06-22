@@ -55,16 +55,17 @@ group :development do
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 
 gem 'pundit', '~> 2.2'
 
 gem 'image_processing', '>= 1.2'
 
 gem 'bootstrap', '~> 4.0.0'
-gem 'htmlbeautifier'
-gem 'sprockets-rails', require: 'sprockets/railtie'
-
-gem 'jquery-rails'
 
 gem 'rails_admin', '~> 2.2.1'
+
+gem 'rubocop'
+gem 'rubocop-rails'
+
+gem 'jquery-rails'
+gem 'rails-js'
