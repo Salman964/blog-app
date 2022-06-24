@@ -71,3 +71,4 @@ gem 'jquery-rails'
 gem 'rails-js'
 
 gem 'cloudinary'
+gem "figaro"

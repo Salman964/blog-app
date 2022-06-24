@@ -7,11 +7,6 @@ class CommentsController < ApplicationController
     @comments = Comment.all
   end
 
-  # def show
-  #   @comments = @post.comments.find(params[:id])
-  #   @user = @comments.user
-  # end
-
   def new
     @comment = @post.comments.new(commentable_id: params[:comment_id])
   end
