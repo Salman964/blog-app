@@ -3,7 +3,6 @@
 class PostsController < ApplicationController
   before_action :assaign_post_and_create_comment
   before_action :find_post, only: %i[show report report_destroy like like_destroy]
-  
 
   def index; end
 
@@ -18,8 +17,10 @@ class PostsController < ApplicationController
     @post.user = current_user
 
     if @post.save
+      flash[:notice] = "Post created"
       redirect_to posts_path
     else
+      flash[:notice] = "Error Occured"
       render status: :not_found
     end
   end
@@ -30,6 +31,9 @@ class PostsController < ApplicationController
     if @suggestion.save
       flash[:notice] = "Successfully submitted"
       redirect_to request.referer
+    else
+      flash[:notice] = "Not Submitted"
+
     end
   end
 
@@ -45,12 +49,23 @@ class PostsController < ApplicationController
     @report = Report.new
     @report = @post.reports.new(post_id: @post.id, reportable_type: "Post", reportable_id: @post.id,
                                 user_id: current_user.id)
-    redirect_to request.referer if @report.save
+
+    if @report.save
+      flash[:notice] = "Report Submitted"
+      redirect_to request.referer
+    else
+      flash[:notice] = "Report Not Submitted"
+    end
   end
 
   def report_destroy
     @report = Report.find_by(post_id: @post.id)
-    redirect_to request.referer if @report.destroy
+    if @report.destroy
+      flash[:notice] = "Report Withdrawn"
+      redirect_to request.referer
+    else
+      flash[:notice] = "Report cannot Withdrawn"
+    end
   end
 
   def like
@@ -75,17 +90,17 @@ class PostsController < ApplicationController
 
   def approved
     if current_user
-    @approve_post = Post.find params[:id]
-    if @approve_post.post_status == "pending"
-      @approve_post.post_status = "approved"
-      render plain: "Post has been approved" if @approve_post.save(validate: false)
+      @approve_post = Post.find params[:id]
+      if @approve_post.post_status == "pending"
+        @approve_post.post_status = "approved"
+        render plain: "Post has been approved" if @approve_post.save(validate: false)
+      else
+        render plain: "Post is not pending"
+      end
     else
-      render plain: "Post is not pending"
-    end
-  else
-    render plain: "Sign in first"
+      render plain: "Sign in first"
 
-  end
+    end
   end
 
   def rejected

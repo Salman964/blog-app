@@ -1,0 +1,20 @@
+# @format
+---
+development:
+  cloud_name: devsinc701
+  api_key: "822522352559176"
+  api_secret: 1DeRbJg2lztdTBWBIYxj0WOVPsM
+  enhance_image_tag: true
+  static_file_support: false
+production:
+  cloud_name: devsinc701
+  api_key: "822522352559176"
+  api_secret: 1DeRbJg2lztdTBWBIYxj0WOVPsM
+  enhance_image_tag: true
+  static_file_support: true
+test:
+  cloud_name: devsinc701
+  api_key: "822522352559176"
+  api_secret: 1DeRbJg2lztdTBWBIYxj0WOVPsM
+  enhance_image_tag: true
+  static_file_support: false
