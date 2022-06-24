@@ -19,7 +19,7 @@ class CommentsController < ApplicationController
   def create
     @comment = Comment.new(user: current_user, post: @post, commantable_type: "Post",
                            commantable_id: @post.id, content: params[:comment][:content])
-    redirect_to request.referer if @comment.save
+    redirect_to posts_path if @comment.save
   end
 
   def destroy
@@ -66,6 +66,20 @@ class CommentsController < ApplicationController
     @comment = @post.comments.find(params[:id])
     @comment_report = @comment.reports.find_by(user_id: current_user)
     redirect_to request.referer if @comment_report.delete
+  end
+
+  def edit
+    @comment = @post.comments.find(params[:id])
+  end
+
+  def update
+    @comment = @post.comments.find(params[:id])
+
+    if @comment.update
+      redirect_to posts_path
+    else
+      render "edit"
+    end
   end
 
   private

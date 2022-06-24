@@ -4,7 +4,7 @@ class PostPolicy < ApplicationPolicy
   end
 
   def show?
-    (@user.users? && @record.active?) || @user.admin? || @user.moderators?
+    record.approved?
   end
 
   def update?
@@ -16,6 +16,7 @@ class PostPolicy < ApplicationPolicy
   end
 
   def check_moderator?
+    byebug
     @user.moderators?
   end
 

@@ -16,7 +16,7 @@
                         <%=post.caption %>
                       </p>
                     </div>
-                    <% if  post.image.attached?%>
+                    <%if post.image.attached?%>
                       <p>
                         <%=link_to (image_tag post.image, style: "width: 710px; display:block") , post_path(post)  %>
                       </p>
@@ -29,7 +29,9 @@
                       <% if pre_like %>
                         <%= button_to 'Unlike', like_destroy_post_path(post, pre_like), method: :delete,  remote: true %>
                       <% else %>
-                        <%= button_to 'Like', like_post_path(post), method: :post, remote: true %>
+                        <div class="likes">
+                          <%= button_to 'Like', like_post_path(post), method: :post, remote: true %>
+                        </div>
                       <% end %>
                       <% pre_report = post.reports.find { |report| report.user_id == current_user.id} %>
                       <% if pre_report %>
@@ -39,10 +41,7 @@
                       <% end %>
                       <div class="like p-2 cursor"><i class="fa fa-commenting-o"></i><span class="ml-1">Comment</span></div>
                       <span> Suggestion</span>
-                      <%= form_with  remote: true do |form| %>
-                        <%= form.text_area(:content, size: '10x1') %>
-                        <%= form.submit %>
-                      <% end %>
+                      <%=render partial: "posts/suggestion", locals: {post: post} %>
                     </div>
                   </div>
                   <div class="bg-light p-2">
@@ -61,7 +60,7 @@
                                 <%= button_to 'Like', like_post_comment_path(post.id,comment.id) %>
                               <% end %>
                               <%if post.user_id== current_user.id%>
-                                <%# <%= button_to 'Edit' , edit_post_comment_path(post,comment) %>
+                                <%= link_to 'Edit' , edit_post_comment_path(post.id,comment.id)  %>
                                 <%= button_to 'Destroy', post_comment_path(post,comment) , method: :delete %>
                               <%end%>
                               <% pre_comment_report = comment.reports.find { |report| report.user_id == current_user.id} %>

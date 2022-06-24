@@ -4,6 +4,7 @@ class PostsController < ApplicationController
   before_action :assaign_post_and_create_comment
   before_action :find_post, only: %i[show report report_destroy like like_destroy]
   
+
   def index; end
 
   def show;  end
@@ -21,6 +22,19 @@ class PostsController < ApplicationController
     else
       render status: :not_found
     end
+  end
+
+  def suggestions
+    @suggestion = Suggestion.new(post_id: params[:id], user_id: current_user.id,
+                                 suggested_text: params[:suggested_text])
+    if @suggestion.save
+      flash[:notice] = "Successfully submitted"
+      redirect_to request.referer
+    end
+  end
+
+  def suggestions_index
+    @suggestions = Suggestion.all
   end
 
   def pending; end
@@ -46,15 +60,12 @@ class PostsController < ApplicationController
       @like = @post.likes.new(user_id: current_user.id, post_id: @post.id, likeable_type: "Post",
                               likeable_id: @post.id)
     end
-
     respond_to do |format|
       if @like.save
         format.html { redirect_to request.referer }
-        # format.json { head :no_content }
         format.js
       end
     end
-    # redirect_to request.referer if @like.save
   end
 
   def like_destroy
@@ -63,19 +74,47 @@ class PostsController < ApplicationController
   end
 
   def approved
+    if current_user
     @approve_post = Post.find params[:id]
-    @approve_post.update_attribute(:post_status, 1)
-    render plain: "Post has been approved" if @approve_post.save
+    if @approve_post.post_status == "pending"
+      @approve_post.post_status = "approved"
+      render plain: "Post has been approved" if @approve_post.save(validate: false)
+    else
+      render plain: "Post is not pending"
+    end
+  else
+    render plain: "Sign in first"
+
+  end
   end
 
   def rejected
     @rejected_post = Post.find params[:id]
-    @rejected_post.update_attribute(:post_status, 2)
-    render plain: "Post has been rejected" if @rejected_post.save
+    if @rejected_post.post_status == "pending"
+      @rejected_post.post_status = "approved"
+      render plain: "Post has been approved" if @rejected_post.save(validate: false)
+    else
+      render plain: "Post already approved idiot"
+    end
   end
 
   def reported
     @reported_posts = Post.where(id: Report.where(reportable_type: "Post").map(&:reportable_id))
+  end
+
+  def accept_suggestion
+    @find_suggestion = Suggestion.find(params[:format])
+    @respective_suggested_post = Post.find(@find_suggestion.post_id)
+    @respective_suggested_post.caption = @find_suggestion.suggested_text
+    if @respective_suggested_post.save(validate: false)
+      render plain: "Post caption has been replaced with suggested text"
+    end
+    Suggestion.delete(@find_suggestion)
+  end
+
+  def reject_suggestion
+    @find_suggestion = Suggestion.find(params[:format])
+    redirect_to request.referer if Suggestion.delete(@find_suggestion)
   end
 
   private

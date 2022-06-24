@@ -11,10 +11,11 @@
     <%if current_user%>
       <% if current_user.users?%>
         <ul class="list-inline text-center ">
+          <li class="list-inline-item p-5 border border-primary"><%=link_to 'All Posts' ,posts_path%></li>
           <li class="list-inline-item p-5 border border-primary"><%=link_to 'Create a Post' ,new_post_path%></li>
           <li class="list-inline-item p-5 border border-primary"><%=link_to 'Pending Posts' ,pending_posts_path %></li>
           <li class="list-inline-item p-5 border border-danger"><%=link_to 'Rejected Posts' ,myrejected_posts_path %></li>
-          <li class="list-inline-item p-5 border border-danger"><%=link_to 'View Your Suggestion Posts'  %></li>
+          <li class="list-inline-item p-5 border border-danger"><%=link_to 'View Your Suggestion Posts' ,suggestions_index_posts_path  %></li>
           <li class="list-inline-item p-2 border border-danger"> <%= button_to 'Logout' , destroy_user_session_path, method: :delete%></li>
         </ul>
       <%end%>
@@ -26,8 +27,12 @@
         </ul>
       <%end%>
     <%end%>
+    <% if notice %>
+      <p class="alert alert-success"><%= notice %></p>
+    <% end %>
+    <% if alert %>
+      <p class="alert alert-danger"><%= alert %></p>
+    <% end %>
     <%= yield %>
-    <p class="notice"><%= notice %></p>
-    <p class="alert"><%= alert %></p>
   </body>
 </html>

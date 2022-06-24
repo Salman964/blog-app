@@ -1,0 +1,11 @@
+<ul>
+  <% @suggestions.each do |suggestion| %>
+    <li>
+      <div>
+        <%= suggestion.suggested_text %>
+        <%=link_to 'Accept', accept_suggestion_posts_path(suggestion.id) %>
+        <%=link_to 'Reject' , reject_suggestion_posts_path(suggestion)%>
+      </div>
+    </li>
+  <% end %>
+</ul>

@@ -69,3 +69,5 @@ gem 'rubocop-rails'
 
 gem 'jquery-rails'
 gem 'rails-js'
+
+gem 'cloudinary'

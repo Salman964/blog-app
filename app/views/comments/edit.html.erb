@@ -1,4 +1,4 @@
-<%= form_for :comment do |c| %>
+<%= form_with model: [@post, @post.comments.build], local: true, method: :post do |c| %>
   <p>
     <%= c.label :content %><br/>
     <%= c.text_field :content %><br/>

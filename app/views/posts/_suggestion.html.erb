@@ -1,0 +1,4 @@
+<%= form_with  url: suggestions_post_path(post.id,post.suggestions.build), method: :post do |form| %>
+  <%= form.text_area(:suggested_text, size: '10x1') %>
+  <%= form.submit %>
+<% end %>

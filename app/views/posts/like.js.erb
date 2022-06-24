@@ -1,1 +1,12 @@
-alert("Hello!");
+<% if @like.errors.any? %>
+  <%# NOTE COMMENT STEP 4: This removes any error messages that were previously generated. %>
+  document.querySelector('#error_explanation') ? document.querySelector('#error_explanation').remove() : null ;
+  <%# NOTE COMMENT STEP 4: This selects the `<form>` in `app/views/posts/show.html.erb` and dynamically injects the `app/views/shared/_validation-messages.html.erb` partial. %>
+  document.querySelector('#comments-form').insertAdjacentHTML('afterbegin', '<%= escape_javascript(render "shared/validation-messages", object: @comment) %>');
+<% else %>
+  <%# NOTE COMMENT STEP 4: This removes any error messages that were previously generated. %>
+  document.querySelector('#error_explanation') ? document.querySelector('#error_explanation').remove() : null ;
+  <%# NOTE COMMENT STEP 4: This selects `<div id="comments">` in `app/views/posts/show.html.erb` and dynamically injects the `app/views/comments/_comment.html.erb` partial. %>
+  document.querySelector('#likes').insertAdjacentHTML('afterbegin', '<%= escape_javascript(render @like) %>') ;
+  <%# NOTE COMMENT STEP 4: This selects the `<form>` in `app/views/posts/show.html.erb` and resets the text area. %>
+<% end %>

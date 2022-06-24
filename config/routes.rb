@@ -6,7 +6,7 @@ Rails.application.routes.draw do
 
   devise_for :users
 
-  root 'posts#index'
+  root 'users#index'
 
   resources :users
 
@@ -19,12 +19,17 @@ Rails.application.routes.draw do
       delete :report_destroy
       get :approved
       get :rejected
+
     end
 
     collection do
       get :pending
       get :reported
       get :myrejected
+      get :suggestions_index
+            get :accept_suggestion
+      get :reject_suggestion
+
     end
 
     resources :likes, only: %i[create destroy]

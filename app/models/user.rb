@@ -8,6 +8,7 @@ class User < ApplicationRecord
   has_many :comments, dependent: :destroy
   has_many :likes, dependent: :destroy
   has_many :reports, dependent: :destroy
+  has_many :suggestions, dependent: :destroy
 
   enum role: { users: 0, moderators: 1, admin: 2 }
 
