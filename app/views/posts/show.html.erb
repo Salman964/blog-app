@@ -9,9 +9,9 @@
   <p> <%=pluralize(@post.likes.count,'like')%></p>
   <% pre_like = @post.likes.find { |like| like.user_id == current_user.id} %>
   <% if pre_like %>
-    <%= button_to 'Unlike', like_destroy_post_path(@post, pre_like), method: :delete %>
+    <%= button_to 'Unlike', like_path(likeable_type: "Post", likeable_id: @post.id), method: :delete %>
   <% else %>
-    <%= button_to 'Like', like_post_path(@post), method: :post %>
+    <%= button_to 'Like', likes_path(likeable_type: "Post", likeable_id: @post.id), method: :post %>
   <% end %>
   <% pre_report = @post.reports.find { |report| report.user_id == current_user.id} %>
   <% if pre_report %>

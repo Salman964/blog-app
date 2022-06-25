@@ -2,6 +2,7 @@
 
 class Post < ApplicationRecord
   default_scope { order(created_at: :desc) }
+  scope :pending_posts, -> { where(post_status: "pending") }
 
   validates :caption,  presence: true
   validates :user_id,  presence: true

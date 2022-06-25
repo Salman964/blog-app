@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class PostsController < ApplicationController
-  before_action :assaign_post_and_create_comment
-  before_action :find_post, only: %i[show report report_destroy like like_destroy]
+  before_action :assaign_post_and_create_comment, only: %i[index show pending myrejected]
+  before_action :find_post, only: %i[show report report_destroy destroy]
 
   def index; end
 
@@ -23,6 +23,11 @@ class PostsController < ApplicationController
       flash[:notice] = "Error Occured"
       render status: :not_found
     end
+  end
+
+  def moderator
+    @posts = Post.pending_posts
+    @comment = Comment.new
   end
 
   def suggestions
@@ -68,49 +73,31 @@ class PostsController < ApplicationController
     end
   end
 
-  def like
-    if already_liked?
-      flash[:notice] = "You can't like more than once"
-    else
-      @like = @post.likes.new(user_id: current_user.id, post_id: @post.id, likeable_type: "Post",
-                              likeable_id: @post.id)
-    end
-    respond_to do |format|
-      if @like.save
-        format.html { redirect_to request.referer }
-        format.js
-      end
-    end
-  end
-
-  def like_destroy
-    @like = Like.find_by(post_id: @post.id)
-    redirect_to request.referer if @like.destroy
-  end
-
   def approved
     if current_user
       @approve_post = Post.find params[:id]
       if @approve_post.post_status == "pending"
         @approve_post.post_status = "approved"
-        render plain: "Post has been approved" if @approve_post.save(validate: false)
+        flash[:notice] = "Post has been approved" if @approve_post.save(validate: false)
       else
-        render plain: "Post is not pending"
+        flash[:notice] = "Post is not in pending"
       end
     else
-      render plain: "Sign in first"
-
+      flash[:notice] = "Sign in First"
     end
+    redirect_to request.referer
   end
 
   def rejected
     @rejected_post = Post.find params[:id]
     if @rejected_post.post_status == "pending"
-      @rejected_post.post_status = "approved"
-      render plain: "Post has been approved" if @rejected_post.save(validate: false)
+      @rejected_post.post_status = "rejected"
+       flash[:notice] = "Post has been rejected"  if @rejected_post.save(validate: false)
     else
-      render plain: "Post already approved idiot"
+      flash[:notice] = "Post is not in pending" 
     end
+    redirect_to request.referer
+
   end
 
   def reported
@@ -132,6 +119,15 @@ class PostsController < ApplicationController
     redirect_to request.referer if Suggestion.delete(@find_suggestion)
   end
 
+  def destroy
+    flash[:notice] = if @post.destroy
+                       "Post Destroyed"
+                     else
+                       "Error Occured While Deleting Post"
+                     end
+    redirect_to request.referer
+  end
+
   private
 
   def post_params
@@ -150,10 +146,5 @@ class PostsController < ApplicationController
   def find_post
     @post = Post.find(params[:id])
     authorize @post
-  end
-
-  def already_liked?
-    Like.where(user_id: current_user.id, post_id:
-    params[:post_id], likeable_type: "Post").exists?
   end
 end

@@ -14,6 +14,7 @@ class CommentsController < ApplicationController
   def create
     @comment = Comment.new(user: current_user, post: @post, commantable_type: "Post",
                            commantable_id: @post.id, content: params[:comment][:content])
+
     redirect_to posts_path if @comment.save
   end
 

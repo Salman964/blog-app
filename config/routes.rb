@@ -2,24 +2,22 @@
 
 Rails.application.routes.draw do
   mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
-  resources :moderators, only: %i[index]
-
+  # resources :moderators, only: %i[index]
   devise_for :users
 
-  root 'users#index'
+  root 'posts#index'
 
-  resources :users
+  resource :users
 
-  resources :posts, only: %i[index show new create] do
+  resources :likes, only: %i[create destroy]
+
+  resources :posts, only: %i[index show new create destroy] do
     member do
       post :suggestions
-      post :like
-      delete :like_destroy
       post :report
       delete :report_destroy
       get :approved
       get :rejected
-
     end
 
     collection do
@@ -27,12 +25,12 @@ Rails.application.routes.draw do
       get :reported
       get :myrejected
       get :suggestions_index
-            get :accept_suggestion
+      get :accept_suggestion
       get :reject_suggestion
+      get :moderator
 
     end
 
-    resources :likes, only: %i[create destroy]
     resources :comments do
       member do
         post :like

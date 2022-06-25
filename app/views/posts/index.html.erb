@@ -27,11 +27,9 @@
                       <p> <%=pluralize(post.likes.count,'like')%></p>
                       <% pre_like = post.likes.find { |like| like.user_id == current_user.id} %>
                       <% if pre_like %>
-                        <%= button_to 'Unlike', like_destroy_post_path(post, pre_like), method: :delete,  remote: true %>
+                        <%= button_to 'Unlike', like_path(id:pre_like.id,likeable_type: "Post", likeable_id: post.id), method: :delete %>
                       <% else %>
-                        <div class="likes">
-                          <%= button_to 'Like', like_post_path(post), method: :post, remote: true %>
-                        </div>
+                        <%= button_to 'Like', likes_path(likeable_type: "Post", likeable_id: post.id), method: :post %>
                       <% end %>
                       <% pre_report = post.reports.find { |report| report.user_id == current_user.id} %>
                       <% if pre_report %>
@@ -42,6 +40,9 @@
                       <div class="like p-2 cursor"><i class="fa fa-commenting-o"></i><span class="ml-1">Comment</span></div>
                       <span> Suggestion</span>
                       <%=render partial: "posts/suggestion", locals: {post: post} %>
+                      <%if post.user_id == current_user.id %>
+                        <%=button_to 'Delete Post', post_path(id:post.id) , method: :delete %>
+                      <%end%>
                     </div>
                   </div>
                   <div class="bg-light p-2">
@@ -55,9 +56,9 @@
                               <p> <%=pluralize(comment.likes.count,'like')%></p>
                               <% pre_like_comment = comment.likes.find { |like| like.user_id == current_user.id } %>
                               <% if pre_like_comment %>
-                                <%= button_to 'Unlike', like_destroy_post_comment_path(post.id,comment.id,pre_like_comment) , method: :delete %>
+                                <%= button_to 'Unlike', like_path(id:pre_like_comment.id,likeable_type: "Comment", likeable_id: comment.id) , method: :delete %>
                               <% else %>
-                                <%= button_to 'Like', like_post_comment_path(post.id,comment.id) %>
+                                <%= button_to 'Like', likes_path(likeable_type: "Comment", likeable_id: comment.id) %>
                               <% end %>
                               <%if post.user_id== current_user.id%>
                                 <%= link_to 'Edit' , edit_post_comment_path(post.id,comment.id)  %>
@@ -105,7 +106,7 @@
         </ul>
       <%end%>
       <%if current_user.moderators? %>
-        <% controller.redirect_to moderators_path %>
+        <% controller.redirect_to moderator_posts_path %>
       <%end%>
       <%if current_user.admin? %>
         <% controller.redirect_to rails_admin_path %>
