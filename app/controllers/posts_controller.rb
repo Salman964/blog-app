@@ -3,6 +3,7 @@
 class PostsController < ApplicationController
   before_action :assaign_post_and_create_comment, only: %i[index show pending myrejected]
   before_action :find_post, only: %i[show report report_destroy destroy]
+  before_action :authenticate_user!
 
   def index; end
 
@@ -15,14 +16,8 @@ class PostsController < ApplicationController
   def create
     @post = Post.new(post_params)
     @post.user = current_user
-
-    if @post.save
-      flash[:notice] = "Post created"
-      redirect_to posts_path
-    else
-      flash[:notice] = "Error Occured"
-      render status: :not_found
-    end
+    flash[:notice] = @post.save ? "Post created" : "Error Occured"
+    redirect_to posts_path
   end
 
   def moderator
@@ -52,56 +47,36 @@ class PostsController < ApplicationController
 
   def report
     @report = Report.new
-    @report = @post.reports.new(post_id: @post.id, reportable_type: "Post", reportable_id: @post.id,
-                                user_id: current_user.id)
-
-    if @report.save
-      flash[:notice] = "Report Submitted"
-      redirect_to request.referer
-    else
-      flash[:notice] = "Report Not Submitted"
-    end
+    @report = Post.create_report(current_user, @post)
+    flash[:notice] = @report.save ? "Report Submitted" : "Report Not Submitted"
+    redirect_to request.referer
   end
 
   def report_destroy
     @report = Report.find_by(post_id: @post.id)
-    if @report.destroy
-      flash[:notice] = "Report Withdrawn"
-      redirect_to request.referer
-    else
-      flash[:notice] = "Report cannot Withdrawn"
-    end
+    flash[:notice] = @report.destroy ? "Report Withdrawn" : "Report cannot Withdrawn"
+    redirect_to request.referer
   end
 
   def approved
-    if current_user
-      @approve_post = Post.find params[:id]
-      if @approve_post.post_status == "pending"
-        @approve_post.post_status = "approved"
-        flash[:notice] = "Post has been approved" if @approve_post.save(validate: false)
-      else
-        flash[:notice] = "Post is not in pending"
-      end
-    else
-      flash[:notice] = "Sign in First"
-    end
+    @approve_post = Post.find params[:id]
+    @approve_post.post_status = "approved" if @approve_post.post_status == "pending"
+    flash[:notice] =
+      @approve_post.save(validate: false) ? "Post has been approved" : "Post is not in pending"
     redirect_to request.referer
   end
 
   def rejected
     @rejected_post = Post.find params[:id]
-    if @rejected_post.post_status == "pending"
-      @rejected_post.post_status = "rejected"
-       flash[:notice] = "Post has been rejected"  if @rejected_post.save(validate: false)
-    else
-      flash[:notice] = "Post is not in pending" 
-    end
-    redirect_to request.referer
+    @rejected_post.post_status = "rejected" if @rejected_post.post_status == "pending"
+    flash[:notice] =
+      @rejected_post.save(validate: false) ? "Post has been rejected" : "Post is not in pending"
 
+    redirect_to request.referer
   end
 
   def reported
-    @reported_posts = Post.where(id: Report.where(reportable_type: "Post").map(&:reportable_id))
+    @reported_posts = Post.reported_posts
   end
 
   def accept_suggestion
@@ -109,9 +84,10 @@ class PostsController < ApplicationController
     @respective_suggested_post = Post.find(@find_suggestion.post_id)
     @respective_suggested_post.caption = @find_suggestion.suggested_text
     if @respective_suggested_post.save(validate: false)
-      render plain: "Post caption has been replaced with suggested text"
+      Suggestion.delete(@find_suggestion)
+      flash[:notice] = "Post caption has been replaced with suggested text"
     end
-    Suggestion.delete(@find_suggestion)
+    redirect_to request.referer
   end
 
   def reject_suggestion
@@ -132,10 +108,6 @@ class PostsController < ApplicationController
 
   def post_params
     params.require(:post).permit(:caption, :image)
-  end
-
-  def report_params
-    params.require(:report).permit.per
   end
 
   def assaign_post_and_create_comment

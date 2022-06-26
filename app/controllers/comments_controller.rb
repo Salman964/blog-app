@@ -2,6 +2,7 @@
 
 class CommentsController < ApplicationController
   before_action :find_post
+  before_action :parentcomment, only: %i[reply]
 
   def index
     @comments = Comment.all
@@ -28,10 +29,10 @@ class CommentsController < ApplicationController
   end
 
   def reply
-    @parentcomment = @post.comments.find(params[:id])
-    @reply = @parentcomment.replies.build
-    @reply = @parentcomment.replies.build(user_id: current_user.id, post_id: @post.id,
-                                          commantable_type: "Comment", content: params[:content], commantable_id: @parentcomment.id)
+    @reply = @parentcomment.replies.build(commantable_type: "Comment", content: params[:content],
+                                          commantable_id: @parentcomment.id)
+    @reply.post_id = @post.id
+    @reply.user_id = current_user.id
     redirect_to request.referer if @reply.save
   end
 
@@ -79,6 +80,10 @@ class CommentsController < ApplicationController
   end
 
   private
+
+  def parentcomment
+    @parentcomment = @post.comments.find(params[:id])
+  end
 
   def find_post
     @post = Post.find(params[:post_id])

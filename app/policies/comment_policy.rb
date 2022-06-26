@@ -8,7 +8,11 @@ class CommentPolicy < ApplicationPolicy
   end
 
   def destroy?
-    @user.id == @record.user_id || @user.admin? || (@user.moderators? && Report.find_by(reportable_id: @record.id))
+    @user.id == @record.user_id || @user.admin? || moderator_destroy_record
+  end
+
+  def moderator_destroy_record
+    @user.moderators? && Report.find_by(reportable_id: @record.id)
   end
 
   alias_method "create?", :users?

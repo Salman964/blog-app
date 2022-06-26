@@ -12,23 +12,26 @@ class PostPolicy < ApplicationPolicy
   end
 
   def destroy?
-    @user.id == @record.user_id || @user.admin? || (@user.moderators? && Report.find_by(reportable_id: @record.id))
+    @user.id == @record.user_id || @user.admin? || moderator_destroy_record
+  end
+
+  def moderator_destroy_record
+    @user.moderators? && Report.find_by(reportable_id: @record.id)
   end
 
   def check_moderator?
-    byebug
     @user.moderators?
+  end
+
+  def approved?
+    current_user.moderators?
   end
 
   alias_method "index?", :users?
   alias_method "new?", :users?
-  alias_method "like_and_report?", :users?
   alias_method "approved?", :check_moderator?
   alias_method "rejected?", :check_moderator?
   alias_method "reported?", :check_moderator?
-  alias_method "create?", :users?
-  alias_method "like_destroy?", :users?
-  alias_method "like?", :users?
   alias_method "create?", :users?
   alias_method "pending?", :users?
   alias_method "myrejected?", :users?
