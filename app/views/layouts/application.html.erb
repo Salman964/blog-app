@@ -9,7 +9,7 @@
   </head>
   <body>
     <%if current_user%>
-      <% if current_user.users?%>
+      <% if current_user.user?%>
         <ul class="list-inline text-center ">
           <li class="list-inline-item p-5 border border-primary"><%=link_to 'All Posts' ,posts_path%></li>
           <li class="list-inline-item p-5 border border-primary"><%=link_to 'Create a Post' ,new_post_path%></li>
@@ -20,11 +20,12 @@
           <li class="list-inline-item p-2 border border-danger"> <%= current_user.email%></li>
         </ul>
       <%end%>
-      <% if current_user.moderators?%>
+      <% if current_user.moderator?%>
         <ul class="list-inline text-center ">
           <li class="list-inline-item p-5 border border-primary"><%=link_to 'Pending Posts' ,moderator_posts_path%></li>
           <li class="list-inline-item p-5 border border-primary"><%=link_to 'Reported Posts',reported_posts_path %></li>
           <li class="list-inline-item p-2 border border-danger"> <%= button_to 'Logout' , destroy_user_session_path, method: :delete%></li>
+          <li class="list-inline-item p-2 border border-danger"> <%= current_user.email%></li>
         </ul>
       <%end%>
     <%end%>

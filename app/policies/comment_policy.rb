@@ -4,7 +4,7 @@
 class CommentPolicy < ApplicationPolicy
   # class ProcedurePolicy
   def users?
-    user.users? || user.admin? || user.moderators?
+    user.user? || user.admin? || user.moderator?
   end
 
   def destroy?
@@ -12,7 +12,7 @@ class CommentPolicy < ApplicationPolicy
   end
 
   def moderator_destroy_record
-    @user.moderators? && Report.find_by(reportable_id: @record.id)
+    @user.moderator? && Report.find_by(reportable_id: @record.id)
   end
 
   alias_method "create?", :users?

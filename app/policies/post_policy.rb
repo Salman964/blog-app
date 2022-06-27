@@ -1,6 +1,6 @@
 class PostPolicy < ApplicationPolicy
   def users?
-    user.users? || user.admin? || user.moderators?
+    user.user? || user.admin? || user.moderator?
   end
 
   def show?
@@ -16,15 +16,15 @@ class PostPolicy < ApplicationPolicy
   end
 
   def moderator_destroy_record
-    @user.moderators? && Report.find_by(reportable_id: @record.id)
+    @user.moderator? && Report.find_by(reportable_id: @record.id)
   end
 
   def check_moderator?
-    @user.moderators?
+    @user.moderator?
   end
 
   def approved?
-    current_user.moderators?
+    current_user.moderator?
   end
 
   alias_method "index?", :users?

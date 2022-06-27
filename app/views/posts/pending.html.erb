@@ -1,7 +1,7 @@
 <div class="text-center text-info">
   <h1>Your Pending Posts</h1>
 </div>
-<%if current_user.users? %>
+<%if current_user.user? %>
   <ul>
     <% @posts.each do |post| %>
       <%if post.pending? and post.user==current_user%>

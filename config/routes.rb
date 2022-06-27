@@ -2,7 +2,7 @@
 
 Rails.application.routes.draw do
   mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
-  # resources :moderators, only: %i[index]
+  # resources :moderator, only: %i[index]
   devise_for :users
 
   root 'posts#index'

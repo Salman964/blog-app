@@ -10,7 +10,7 @@ class User < ApplicationRecord
   has_many :reports, dependent: :destroy
   has_many :suggestions, dependent: :destroy
 
-  enum role: { users: 0, moderators: 1, admin: 2 }
+  enum role: { user: 0, moderator: 1, admin: 2 }
 
   validates :email, presence: true, uniqueness: true
 end
