@@ -96,11 +96,7 @@ class PostsController < ApplicationController
   end
 
   def destroy
-    flash[:notice] = if @post.destroy
-                       "Post Destroyed"
-                     else
-                       "Error Occured While Deleting Post"
-                     end
+    flash[:notice] = @post.destroy ? "Post Destroyed" : "Error Occured While Deleting Post"
     redirect_to request.referer
   end
 
